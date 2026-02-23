@@ -1,0 +1,28 @@
+name: ORION CI
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Check Python syntax
+      run: |
+        echo "ORION CI — Bengio 14-Indicator Engine"
+        PY_FILES=$(find . -name '*.py' -not -path './.git/*' | head -50)
+        if [ -z "$PY_FILES" ]; then
+          echo "No Python files — skipping."
+        else
+          echo "$PY_FILES" | xargs python -m py_compile
+          echo "All passed."
+        fi
